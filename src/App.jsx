@@ -1,4 +1,3 @@
-// frontend/src/App.jsx
 import React, { useState } from "react";
 import PhoneLookupForm from "./PhoneLookupForm";
 import ResultCard from "./ResultCard";
@@ -7,7 +6,14 @@ import History from "./History";
 import Favorites from "./Favorites";
 
 export default function App() {
-  const [result, setResult] = useState(null);
+  const [singleResult, setSingleResult] = useState(null); // for single lookup
+  const [batchResults, setBatchResults] = useState([]); // for PDF/CSV upload
+  const [currentPage, setCurrentPage] = useState(0);
+
+  // Decide what to show
+  const currentResult = batchResults.length > 0
+    ? batchResults[currentPage]
+    : singleResult;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex flex-col">
@@ -33,19 +39,44 @@ export default function App() {
         {/* Sidebar */}
         <aside className="lg:col-span-1 space-y-6">
           <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-            <PhoneLookupForm setResult={setResult} />
+            <PhoneLookupForm setResult={setSingleResult} />
           </div>
 
           <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-            <PDFUpload setResult={setResult} />
+            <PDFUpload 
+              setBatchResults={setBatchResults} 
+              setCurrentPage={setCurrentPage} 
+              setSingleResult={setSingleResult} 
+            />
           </div>
         </aside>
 
         {/* Main Panel */}
         <section className="lg:col-span-3 space-y-6">
-          {/* Result or Placeholder */}
-          {result ? (
-            <ResultCard result={result} />
+          {currentResult ? (
+            <>
+              <ResultCard result={currentResult} />
+
+              {/* Pagination */}
+              {batchResults.length > 1 && (
+                <div className="flex justify-between mt-4">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
+                    disabled={currentPage === 0}
+                    className="bg-gray-200 px-3 py-1 rounded"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, batchResults.length - 1))}
+                    disabled={currentPage === batchResults.length - 1}
+                    className="bg-gray-200 px-3 py-1 rounded"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="bg-white rounded-xl shadow-md p-10 text-center border border-gray-100">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
