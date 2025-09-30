@@ -1,8 +1,9 @@
 import React from "react";
+import API_BASE from "./config";
 
 const ExportButtons = () => {
   const handleExport = (format) => {
-    window.open(`http://localhost:5000/api/export?format=${format}`, "_blank");
+    window.open(`${API_BASE}/api/export?format=${format}`, "_blank");
   };
 
   return (

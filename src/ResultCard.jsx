@@ -1,6 +1,7 @@
 // frontend/src/ResultCard.jsx
 import React, { useState } from "react";
 import axios from "axios";
+import API_BASE from "./config"; // add this at the top
 
 function colorForScore(score) {
   if (score >= 75) return "bg-red-500";
@@ -27,33 +28,34 @@ export default function ResultCard({ result }) {
   const score = rep.score ?? 0;
   const coords = result.coordinates;
 
-  const addToFavorites = async () => {
-    try {
-      await axios.post("http://127.0.0.1:5000/api/favorites", { phone: result.number, note: "Saved from UI" });
-      setSaved(true);
-    } catch (e) {
-      alert("Failed to add favorite");
-    }
-  };
+const addToFavorites = async () => {
+  try {
+    await axios.post(`${API_BASE}/api/favorites`, { phone: result.number, note: "Saved from UI" });
+    setSaved(true);
+  } catch (e) {
+    alert("Failed to add favorite");
+  }
+};
 
-  const exportPDF = async () => {
-    try {
-      const res = await axios.post(
-        "http://127.0.0.1:5000/api/export", 
-        { numbers: [result.number], format: "pdf" }, 
-        { responseType: "blob" }
-      );
-      const blob = new Blob([res.data], { type: "application/pdf" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `report_${result.number}.pdf`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (e) {
-      alert("Export failed");
-    }
-  };
+const exportPDF = async () => {
+  try {
+    const res = await axios.post(
+      `${API_BASE}/api/export`,
+      { numbers: [result.number], format: "pdf" },
+      { responseType: "blob" }
+    );
+    const blob = new Blob([res.data], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `report_${result.number}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    alert("Export failed");
+  }
+};
+
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">

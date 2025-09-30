@@ -1,6 +1,7 @@
 // frontend/src/Favorites.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import API_BASE from "./config";
 
 export default function Favorites() {
   const [rows, setRows] = useState([]);
@@ -13,7 +14,7 @@ export default function Favorites() {
   const fetchFavs = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://127.0.0.1:5000/api/favorites");
+      const res = await axios.get(`${API_BASE}/api/favorites`);
       setRows(res.data.results || []);
     } catch (e) {
       setRows([]);
@@ -24,7 +25,7 @@ export default function Favorites() {
   
   const remove = async (num) => {
     try {
-      await axios.delete("http://127.0.0.1:5000/api/favorites", { 
+      await axios.delete(`${API_BASE}/api/favorites`, { 
         params: { phone: num } 
       });
       fetchFavs();

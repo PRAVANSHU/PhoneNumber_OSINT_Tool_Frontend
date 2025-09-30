@@ -1,6 +1,7 @@
 // frontend/src/History.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import API_BASE from "./config";
 
 export default function History() {
   const [rows, setRows] = useState([]);
@@ -13,7 +14,7 @@ export default function History() {
   const fetchHistory = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://127.0.0.1:5000/api/history?limit=5");
+      const res = await axios.get(`${API_BASE}/api/history?limit=5`);
       setRows(res.data.results || []);
     } catch (e) {
       setRows([]);
@@ -21,7 +22,7 @@ export default function History() {
       setLoading(false);
     }
   };
-
+  
   return (
     <div>
       <h3 className="font-semibold text-gray-800 mb-4 flex items-center">

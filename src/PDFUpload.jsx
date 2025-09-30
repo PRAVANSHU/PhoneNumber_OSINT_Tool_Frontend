@@ -1,5 +1,7 @@
+// frontend/src/PDFUpload.jsx
 import React, { useState } from "react";
 import axios from "axios";
+import API_BASE from "./config";
 
 export default function PDFUpload({ setBatchResults, setCurrentPage, setSingleResult }) {
   const [file, setFile] = useState(null);
@@ -12,18 +14,17 @@ export default function PDFUpload({ setBatchResults, setCurrentPage, setSingleRe
     const form = new FormData();
     form.append("file", file);
     try {
-      const res = await axios.post("http://127.0.0.1:5000/api/upload-pdf", form, { 
+      const res = await axios.post(`${API_BASE}/api/upload-pdf`, form, { 
         headers: { "Content-Type": "multipart/form-data" } 
       });
 
       const results = res.data.results || [];
       setNumbers(res.data.numbers || []);
 
-      // Update App state for pagination
       if (results.length > 0) {
         setBatchResults(results);
         setCurrentPage(0);
-        setSingleResult(null); // clear single lookup
+        setSingleResult(null);
       } else {
         alert("No numbers found in PDF");
       }
@@ -40,7 +41,7 @@ export default function PDFUpload({ setBatchResults, setCurrentPage, setSingleRe
     if (!numbers.length) return alert("No numbers to export");
     try {
       const res = await axios.post(
-        "http://127.0.0.1:5000/api/export", 
+        `${API_BASE}/api/export`, 
         { numbers, format: "pdf" }, 
         { responseType: "blob" }
       );

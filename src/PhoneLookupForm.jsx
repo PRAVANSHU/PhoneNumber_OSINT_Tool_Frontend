@@ -1,6 +1,7 @@
 // frontend/src/PhoneLookupForm.jsx
 import React, { useState } from "react";
 import axios from "axios";
+import API_BASE from "./config"; // add this at the top
 
 const COUNTRY_CODES = [
   { name: "India", code: "+91" },
@@ -33,7 +34,7 @@ export default function PhoneLookupForm({ setResult }) {
     if (!phone) return alert("Enter a phone number");
     setLoading(true);
     try {
-      const res = await axios.post("http://127.0.0.1:5000/api/lookup", { phone });
+      const res = await axios.post(`${API_BASE}/api/lookup`, { phone });
       setResult(res.data);
     } catch (err) {
       console.error(err);
